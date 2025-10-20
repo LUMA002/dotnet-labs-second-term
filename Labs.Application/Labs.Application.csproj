@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Labs.Shared\Labs.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="DTOs\Request\" />
   </ItemGroup>
 
