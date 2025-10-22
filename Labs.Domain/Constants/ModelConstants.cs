@@ -25,7 +25,7 @@ namespace Labs.Domain.Constants
         public const int DestinationNameMaxLength = 100;
 
         // Decimal Precision
-        public const int DecimalPrecision = 18;
+        public const int DecimalPrecision = 8;
         public const int DecimalScale = 2;
     }
 }

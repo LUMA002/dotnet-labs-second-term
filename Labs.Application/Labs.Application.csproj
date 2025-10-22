@@ -10,4 +10,8 @@
     <Folder Include="DTOs\Request\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Labs.Domain\Labs.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

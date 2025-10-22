@@ -19,5 +19,8 @@ public class ReservationContext : DbContext
     {
       
         base.OnModelCreating(modelBuilder);
+
+        // Automatically apply all configurations from the current assembly
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ReservationContext).Assembly);
     }
 }
