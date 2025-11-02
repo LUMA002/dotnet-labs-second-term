@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Labs.Domain.Entities
 {
-    public class Train
+    public sealed class Train
     {
-        public Guid TrainId { get; set; }
+        public Guid TrainId { get; init; }
         public string TrainNumber { get; set; } = string.Empty;
         public Guid TrainTypeId { get; set; }
         public TrainType? TrainType { get; set; } 

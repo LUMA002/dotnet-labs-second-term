@@ -13,6 +13,20 @@
 *.userosscache
 *.sln.docstates
 
+# Database files
+*.mdf
+*.ldf
+*.ndf
+
+## Sensitive configuration files
+**/appsettings.*.local.json
+**/appsettings.local.json
+secrets.json
+connectionstrings.json
+
+## User Secrets
+**/secrets.json
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

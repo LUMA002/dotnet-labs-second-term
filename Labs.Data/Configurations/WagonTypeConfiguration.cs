@@ -10,7 +10,7 @@ namespace Labs.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<WagonType> builder)
         {
-            builder.ToTable("WagonType");
+            builder.ToTable(nameof(WagonType));
 
             builder.HasKey(wt => wt.WagonTypeId);
 

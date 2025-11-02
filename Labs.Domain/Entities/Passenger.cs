@@ -1,9 +1,9 @@
 ﻿
 namespace Labs.Domain.Entities
 {
-    public class Passenger
+    public sealed class Passenger
     {
-        public Guid PassengerId { get; set; }
+        public Guid PassengerId { get; init; }
         public string FirstName {get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string? MiddleName { get; set; }

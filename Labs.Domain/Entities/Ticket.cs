@@ -1,8 +1,8 @@
 ﻿namespace Labs.Domain.Entities;
 
-public class Ticket
+public sealed class Ticket
 {
-    public Guid TicketId { get; set; }
+    public Guid TicketId { get; init; } // change to Id
 
     public Guid PassengerId { get; set; }
     public Passenger Passenger { get; set; } = null!;
@@ -13,7 +13,7 @@ public class Ticket
     public Guid DestinationId { get; set; }
     public Destination Destination { get; set; } = null!;
 
-    public DateTime DepartureDateTime { get; set; }
+    public DateTime DepartureDateTime { get; set; } // change to DateTimeOffset
     public DateTime ArrivalDateTime { get; set; }
     public decimal UrgencySurcharge { get; set; }
     public decimal TotalPrice { get; set; } 

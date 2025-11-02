@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Labs.Domain.Entities
 {
-    public class Destination
+    public sealed class Destination
     {
-        public Guid DestinationId { get; set; }
+        public Guid DestinationId { get; init; }
         public string DestinationName { get; set; } = string.Empty;
         public int Distance { get; set; } 
         public decimal BasePrice { get; set; }

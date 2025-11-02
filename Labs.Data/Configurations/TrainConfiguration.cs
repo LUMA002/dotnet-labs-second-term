@@ -10,7 +10,7 @@ namespace Labs.Data.Configurations
 
         public void Configure(EntityTypeBuilder<Train> builder) { 
 
-            builder.ToTable("Train");
+            builder.ToTable(nameof(Train));
             
             builder.HasKey(t => t.TrainId); 
            

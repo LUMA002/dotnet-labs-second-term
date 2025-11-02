@@ -1,8 +1,8 @@
 namespace Labs.Domain.Entities
 {
-    public class Wagon
+    public sealed class Wagon
     {
-        public Guid WagonId { get; set; }
+        public Guid WagonId { get; init; }
         public Guid TrainId { get; set; }
         public string WagonNumber { get; set; } = null!;
         public Guid WagonTypeId { get; set; }

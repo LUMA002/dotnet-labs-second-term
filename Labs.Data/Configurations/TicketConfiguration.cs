@@ -10,7 +10,7 @@ namespace Labs.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Ticket> builder)
         {
-            builder.ToTable("Ticket");
+            builder.ToTable(nameof(Ticket));
             builder.HasKey(t => t.TicketId);
 
 

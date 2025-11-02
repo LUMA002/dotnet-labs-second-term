@@ -9,10 +9,10 @@ namespace Labs.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Destination> builder)
         {
-           builder.ToTable("Destination");
+            builder.ToTable(nameof(Destination));
 
-            builder.HasKey(d => d.DestinationId);   
-            
+            builder.HasKey(d => d.DestinationId);
+
             builder.Property(d => d.DestinationName)
                 .IsRequired()
                 .HasMaxLength(ModelConstants.DestinationNameMaxLength)
@@ -20,9 +20,9 @@ namespace Labs.Data.Configurations
 
             builder.Property(d => d.Distance).IsRequired();
 
-           builder.Property(d => d.BasePrice)
-                .HasPrecision(ModelConstants.DecimalPrecision, ModelConstants.DecimalScale)
-                .IsRequired();
+            builder.Property(d => d.BasePrice)
+                 .HasPrecision(ModelConstants.DecimalPrecision, ModelConstants.DecimalScale)
+                 .IsRequired();
 
             builder.HasIndex(d => d.DestinationName).IsUnique();
 
