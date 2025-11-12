@@ -2,8 +2,6 @@ using Labs.Application.DTOs.Request;
 using Labs.Application.DTOs.Response;
 using Labs.Application.Interfaces;
 using Labs.Domain.Entities;
-using Labs.Domain.Exceptions;
-using System.Text.RegularExpressions;
 
 namespace Labs.Application.Services;
 
@@ -16,10 +14,10 @@ public class PassengerService
         _repository = repository;
     }
 
-    public async Task<IEnumerable<PassengerDto>> GetAllPassengersAsync()
+    public async Task<IEnumerable<PassengerResponseDto>> GetAllPassengersAsync()
     {
         var passengers = await _repository.GetAllAsync();
-        return passengers.Select(p => new PassengerDto(
+        return passengers.Select(p => new PassengerResponseDto(
             p.PassengerId,
             p.FirstName,
             p.LastName,
@@ -29,10 +27,10 @@ public class PassengerService
         ));
     }
 
-    public async Task<PassengerDto?> GetPassengerByIdAsync(Guid id)
+    public async Task<PassengerResponseDto?> GetPassengerByIdAsync(Guid id)
     {
         var passenger = await _repository.GetByIdAsync(id);
-        return passenger == null ? null : new PassengerDto(
+        return passenger == null ? null : new PassengerResponseDto(
             passenger.PassengerId,
             passenger.FirstName,
             passenger.LastName,
@@ -42,10 +40,8 @@ public class PassengerService
         );
     }
 
-    public async Task<PassengerDto> CreatePassengerAsync(CreatePassengerDto dto)
+    public async Task<PassengerResponseDto> CreatePassengerAsync(CreatePassengerRequestDto dto)
     {
-        ValidatePassenger(dto.FirstName, dto.LastName, dto.MiddleName, dto.Address, dto.PhoneNumber);
-
         var passenger = new Passenger
         {
             PassengerId = Guid.NewGuid(),
@@ -59,7 +55,7 @@ public class PassengerService
         await _repository.AddAsync(passenger);
         await _repository.SaveChangesAsync();
 
-        return new PassengerDto(
+        return new PassengerResponseDto(
             passenger.PassengerId,
             passenger.FirstName,
             passenger.LastName,
@@ -68,13 +64,10 @@ public class PassengerService
             passenger.PhoneNumber
         );
     }
-
-    public async Task<bool> UpdatePassengerAsync(Guid id, CreatePassengerDto dto)
+    public async Task<bool> UpdatePassengerAsync(UpdatePassengerRequestDto dto)
     {
-        var existing = await _repository.GetByIdAsync(id);
+        var existing = await _repository.GetByIdAsync(dto.PassengerId);
         if (existing == null) return false;
-
-        ValidatePassenger(dto.FirstName, dto.LastName, dto.MiddleName, dto.Address, dto.PhoneNumber);
 
         existing.FirstName = dto.FirstName.Trim();
         existing.LastName = dto.LastName.Trim();
@@ -97,32 +90,5 @@ public class PassengerService
         await _repository.SaveChangesAsync();
 
         return true;
-    }
-
-    private static void ValidatePassenger(
-        string firstName,
-        string lastName,
-        string? middleName,
-        string? address,
-        string? phoneNumber)
-    {
-        if (string.IsNullOrWhiteSpace(firstName) || firstName.Length < 2 || firstName.Length > 100)
-            throw new ValidationException("First name must be between 2 and 100 characters");
-
-        if (string.IsNullOrWhiteSpace(lastName) || lastName.Length < 2 || lastName.Length > 100)
-            throw new ValidationException("Last name must be between 2 and 100 characters");
-
-        if (!string.IsNullOrWhiteSpace(middleName) && (middleName.Length < 2 || middleName.Length > 100))
-            throw new ValidationException("Middle name must be between 2 and 100 characters");
-
-        if (!string.IsNullOrWhiteSpace(address) && address.Length > 255)
-            throw new ValidationException("Address is too long (max 255 characters)");
-
-        if (!string.IsNullOrWhiteSpace(phoneNumber))
-        {
-            var phoneRegex = new Regex(@"^\+?[0-9]{10,17}$");
-            if (!phoneRegex.IsMatch(phoneNumber))
-                throw new ValidationException("Invalid phone format. Expected: +380XXXXXXXXX or XXXXXXXXX");
-        }
     }
 }

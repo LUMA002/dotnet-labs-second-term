@@ -1,6 +1,8 @@
 namespace Labs.Application.DTOs.Response;
-
-public record PassengerDto(
+/// <summary>
+/// DTO for returning passenger data
+/// </summary>
+public record PassengerResponseDto(
     Guid Id,
     string FirstName,
     string LastName,

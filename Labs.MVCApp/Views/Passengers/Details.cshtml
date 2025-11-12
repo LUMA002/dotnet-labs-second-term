@@ -1,0 +1,57 @@
+@model Labs.Application.DTOs.Response.PassengerResponseDto
+
+@{
+    ViewData["Title"] = "Passenger Details";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0">
+                        <i class="bi bi-person-circle"></i> Passenger Details
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">ID:</dt>
+                        <dd class="col-sm-9"><code>@Model.Id</code></dd>
+
+                        <dt class="col-sm-3">First Name:</dt>
+                        <dd class="col-sm-9">@Model.FirstName</dd>
+
+                        <dt class="col-sm-3">Last Name:</dt>
+                        <dd class="col-sm-9">@Model.LastName</dd>
+
+                        @if (!string.IsNullOrEmpty(Model.MiddleName))
+                        {
+                            <dt class="col-sm-3">Middle Name:</dt>
+                            <dd class="col-sm-9">@Model.MiddleName</dd>
+                        }
+
+                        <dt class="col-sm-3">Phone:</dt>
+                        <dd class="col-sm-9">@(Model.PhoneNumber ?? "Not specified")</dd>
+
+                        <dt class="col-sm-3">Address:</dt>
+                        <dd class="col-sm-9">@(Model.Address ?? "Not specified")</dd>
+                    </dl>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to List
+                        </a>
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

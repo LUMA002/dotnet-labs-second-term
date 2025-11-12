@@ -1,0 +1,72 @@
+@model Labs.Application.DTOs.Request.UpdatePassengerRequestDto
+
+@{
+    ViewData["Title"] = "Edit Passenger";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="mb-0">
+                        <i class="bi bi-pencil-square"></i> Edit Passenger
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" method="post">
+                        @*  Hidden Guid *@
+                        <input type="hidden" asp-for="PassengerId" />
+                        
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FirstName" class="form-label" for="FirstName">First Name *</label>
+                                <input asp-for="FirstName" class="form-control" aria-required="true" id="FirstName" />
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="LastName" class="form-label" for="LastName">Last Name *</label>
+                                <input asp-for="LastName" class="form-control" aria-required="true" id="LastName" />
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="MiddleName" class="form-label" for="MiddleName">Middle Name</label>
+                            <input asp-for="MiddleName" class="form-control" id="MiddleName" />
+                            <span asp-validation-for="MiddleName" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PhoneNumber" class="form-label" for="PhoneNumber">Phone Number</label>
+                            <input asp-for="PhoneNumber" class="form-control" type="tel" placeholder="+380XXXXXXXXX" id="PhoneNumber" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Address" class="form-label" for="Address">Address</label>
+                            <textarea asp-for="Address" class="form-control" rows="3" id="Address"></textarea>
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to List
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-save"></i> Update
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

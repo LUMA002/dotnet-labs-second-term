@@ -16,7 +16,7 @@ public class TicketService
         _ticketRepository = ticketRepository;
     }
 
-    public async Task<IEnumerable<TicketInfoDto>> GetAllTicketsWithDetailsAsync()
+    public async Task<IEnumerable<TicketInfoResponseDto>> GetAllTicketsWithDetailsAsync()
     {
         return await _ticketRepository.GetAllTicketsWithDetailsAsync();
     }

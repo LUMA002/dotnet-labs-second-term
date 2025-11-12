@@ -133,4 +133,10 @@ public class AdoPassengerRepository : AdoBaseRepository, IRepository<Passenger>
         // ADO.NET execute commands instantly, so SaveChanges isn't necessary
         return await Task.FromResult(0); // plug
     }
+
+    public async Task RemoveAsync(Passenger entity)
+    {
+        var sql = "DELETE FROM Passenger WHERE PassengerId = @PassengerId";
+        await ExecuteNonQueryAsync(sql, new SqlParameter("@PassengerId", entity.PassengerId));
+    }
 }

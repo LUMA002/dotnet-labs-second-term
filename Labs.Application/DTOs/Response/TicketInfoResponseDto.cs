@@ -1,6 +1,9 @@
 namespace Labs.Application.DTOs.Response;
 
-public record TicketInfoDto(
+/// <summary>
+/// DTO for displaying ticket information with all related data
+/// </summary>
+public record TicketInfoResponseDto(
     Guid TicketId,
     string PassengerName,
     string PassengerPhone,

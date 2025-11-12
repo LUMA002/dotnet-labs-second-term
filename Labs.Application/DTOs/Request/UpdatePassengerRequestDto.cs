@@ -1,9 +1,13 @@
 namespace Labs.Application.DTOs.Request;
 
-public record CreatePassengerDto(
+/// <summary>
+/// DTO for updating existing passenger
+/// </summary>
+public record UpdatePassengerRequestDto(
+    Guid PassengerId, 
     string FirstName,
     string LastName,
     string? MiddleName,
     string? Address,
     string? PhoneNumber
-);
+);  

@@ -10,9 +10,9 @@ public class AdoTicketRepository : AdoBaseRepository, ITicketRepository
     {
     }
 
-    public async Task<IEnumerable<TicketInfoDto>> GetAllTicketsWithDetailsAsync()
+    public async Task<IEnumerable<TicketInfoResponseDto>> GetAllTicketsWithDetailsAsync()
     {
-        var tickets = new List<TicketInfoDto>();
+        var tickets = new List<TicketInfoResponseDto>();
 
         var sql = @"
             SELECT 
@@ -48,7 +48,7 @@ public class AdoTicketRepository : AdoBaseRepository, ITicketRepository
 
         while (await reader.ReadAsync())
         {
-            tickets.Add(new TicketInfoDto(
+            tickets.Add(new TicketInfoResponseDto(
                 reader.GetGuid(0),                              // TicketId
                 reader.GetString(1).Trim(),                     // PassengerName
                 reader.IsDBNull(2) ? "N/A" : reader.GetString(2), // PhoneNumber

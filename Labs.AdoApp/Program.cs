@@ -7,6 +7,8 @@ using Labs.Domain.Exceptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using FluentValidation;
+using Labs.Application.Validators;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
@@ -33,6 +35,11 @@ var host = Host.CreateDefaultBuilder(args)
         // Services
         services.AddScoped<PassengerService>();
         services.AddScoped<TicketService>();
+
+        // Validators
+        services.AddScoped<IValidator<CreatePassengerRequestDto>, CreatePassengerDtoValidator>();
+        services.AddScoped<IValidator<UpdatePassengerRequestDto>, UpdatePassengerDtoValidator>();
+
     })
     .Build();
 
@@ -41,6 +48,10 @@ Console.WriteLine("Ticket Reservation System (ADO.NET)\n");
 using var scope = host.Services.CreateScope();
 var passengerService = scope.ServiceProvider.GetRequiredService<PassengerService>();
 var ticketService = scope.ServiceProvider.GetRequiredService<TicketService>();
+
+var createValidator = scope.ServiceProvider.GetRequiredService<IValidator<CreatePassengerRequestDto>>();
+var updateValidator = scope.ServiceProvider.GetRequiredService<IValidator<UpdatePassengerRequestDto>>();
+
 
 bool exit = false;
 
@@ -77,7 +88,7 @@ while (!exit)
                 break;
         }
     }
-    catch (ValidationException ex)
+    catch (CustomValidationException ex)
     {
         Console.WriteLine($"\nValidation error: {ex.Message}");
     }
@@ -133,13 +144,25 @@ async Task AddNewPassenger(PassengerService service)
     Console.Write("Phone (+380XXXXXXXXX or skip): ");
     var phone = Console.ReadLine();
 
-    var dto = new CreatePassengerDto(
+    var dto = new CreatePassengerRequestDto(
         firstName,
         lastName,
         string.IsNullOrWhiteSpace(middleName) ? null : middleName,
         string.IsNullOrWhiteSpace(address) ? null : address,
         string.IsNullOrWhiteSpace(phone) ? null : phone
     );
+
+    var validationResult = await createValidator.ValidateAsync(dto);
+
+    if (!validationResult.IsValid)
+    {
+        Console.WriteLine("\n Validation errors:");
+        foreach (var error in validationResult.Errors)
+        {
+            Console.WriteLine($"  - {error.PropertyName}: {error.ErrorMessage}");
+        }
+        return;
+    }
 
     var passenger = await service.CreatePassengerAsync(dto);
     Console.WriteLine($"\nPassenger created successfully! ID: {passenger.Id}");
@@ -187,11 +210,23 @@ async Task UpdatePassenger(PassengerService service)
     var address = Console.ReadLine();
     if (string.IsNullOrWhiteSpace(address)) address = passenger.Address;
 
-    var dto = new CreatePassengerDto(firstName, lastName, middleName, address, phone);
-    var success = await service.UpdatePassengerAsync(id, dto);
+    var dto = new UpdatePassengerRequestDto(id, firstName, lastName, middleName, address, phone);
+    var validationResult = await updateValidator.ValidateAsync(dto);
+
+    if (!validationResult.IsValid)
+    {
+        Console.WriteLine("\n Validation errors:");
+        foreach (var error in validationResult.Errors)
+        {
+            Console.WriteLine($"  - {error.PropertyName}: {error.ErrorMessage}");
+        }
+        return;
+    }
+    var success = await service.UpdatePassengerAsync(dto);
 
     Console.WriteLine(success ? "\nUpdated successfully" : "\nUpdate failed");
 }
+
 
 async Task DeletePassenger(PassengerService service)
 {
@@ -257,7 +292,7 @@ async Task ShowAllTickets(TicketService service)
     Console.WriteLine("\nALL TICKETS");
     Console.WriteLine(new string('=', 90));
 
-    var tickets = await service .GetAllTicketsWithDetailsAsync();
+    var tickets = await service.GetAllTicketsWithDetailsAsync();
 
     if (!tickets.Any())
     {

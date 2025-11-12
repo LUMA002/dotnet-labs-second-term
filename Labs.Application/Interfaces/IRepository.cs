@@ -19,8 +19,10 @@ public interface IRepository<T> where T : class
 
     Task DeleteAsync(Guid id);
 
+    Task RemoveAsync(T entity);
+
     /// <summary>
-    /// Save changes in BD - important for EF.
+    /// Save changes in DB - important for EF.
     /// </summary>
     Task<int> SaveChangesAsync();
 }

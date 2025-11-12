@@ -16,7 +16,7 @@ public class TicketRepository : ITicketRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<TicketInfoDto>> GetAllTicketsWithDetailsAsync()
+    public async Task<IEnumerable<TicketInfoResponseDto>> GetAllTicketsWithDetailsAsync()
     {
         return await _context.Tickets
             .Include(t => t.Passenger   )
@@ -27,7 +27,7 @@ public class TicketRepository : ITicketRepository
             .Include(t => t.Destination)
             .OrderBy(t => t.Passenger.LastName) 
             .ThenBy(t => t.Passenger.FirstName)
-            .Select(t => new TicketInfoDto(
+            .Select(t => new TicketInfoResponseDto(
                 t.TicketId,
                 $"{t.Passenger.LastName} {t.Passenger.FirstName} {t.Passenger.MiddleName ?? ""}".Trim(),
                 t.Passenger.PhoneNumber ?? "N/A",

@@ -1,0 +1,83 @@
+@model IEnumerable<Labs.Application.DTOs.Response.TicketInfoResponseDto>
+
+@{
+    ViewData["Title"] = "Tickets";
+}
+
+<div class="container mt-4">
+    <h1>
+        <i class="bi bi-ticket-perforated"></i> All Tickets
+    </h1>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No tickets found.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var ticket in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-train-front"></i> Train @ticket.TrainNumber
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2">
+                                <strong><i class="bi bi-person"></i> Passenger:</strong><br />
+                                @ticket.PassengerName
+                            </p>
+                            <p class="mb-2">
+                                <strong><i class="bi bi-telephone"></i> Phone:</strong><br />
+                                @ticket.PassengerPhone
+                            </p>
+                            <p class="mb-2">
+                                <strong><i class="bi bi-geo-alt"></i> Destination:</strong><br />
+                                @ticket.Destination (@ticket.Distance km)
+                            </p>
+                            <p class="mb-2">
+                                <strong><i class="bi bi-calendar-event"></i> Departure:</strong><br />
+                                @ticket.DepartureDateTime.ToString("yyyy-MM-dd HH:mm")
+                            </p>
+                            <p class="mb-2">
+                                <strong><i class="bi bi-calendar-check"></i> Arrival:</strong><br />
+                                @ticket.ArrivalDateTime.ToString("yyyy-MM-dd HH:mm")
+                            </p>
+                            <hr />
+                            <p class="mb-1">
+                                <small>Base Price: @ticket.BasePrice.ToString("C")</small>
+                            </p>
+                            <p class="mb-1">
+                                <small>Wagon Surcharge: @ticket.WagonSurcharge.ToString("C")</small>
+                            </p>
+                            <p class="mb-1">
+                                <small>Urgency Surcharge: @ticket.UrgencySurcharge.ToString("C")</small>
+                            </p>
+                            <h5 class="text-primary mt-2">
+                                <strong>Total: @ticket.TotalPrice.ToString("C")</strong>
+                            </h5>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <small>
+                                @ticket.TrainType | Wagon @ticket.WagonNumber (@ticket.WagonType)
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

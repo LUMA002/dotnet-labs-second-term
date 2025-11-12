@@ -14,7 +14,7 @@ public sealed class Ticket
     public Destination Destination { get; set; } = null!;
 
     public DateTime DepartureDateTime { get; set; } // change to DateTimeOffset
-    public DateTime ArrivalDateTime { get; set; }
+    public DateTime ArrivalDateTime { get; set; } // change to DateTimeOffset
     public decimal UrgencySurcharge { get; set; }
     public decimal TotalPrice { get; set; } 
 }

@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="6.1.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.10" />
   </ItemGroup>

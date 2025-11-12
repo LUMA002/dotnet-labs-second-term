@@ -58,4 +58,11 @@ public class Repository<T> : IRepository<T> where T : class
         // do all changes in DB and save them
         return await _context.SaveChangesAsync();
     }
+
+    public async Task RemoveAsync(T entity)
+    {
+        _dbSet.Remove(entity); //sychronous operation in EF (just marking to deletion)
+
+        await Task.CompletedTask; // plug to keep async signature
+    }
 }

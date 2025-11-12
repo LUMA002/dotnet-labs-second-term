@@ -7,5 +7,5 @@ namespace Labs.Application.Interfaces;
 /// </summary>
 public interface ITicketRepository
 {
-    Task<IEnumerable<TicketInfoDto>> GetAllTicketsWithDetailsAsync();
+    Task<IEnumerable<TicketInfoResponseDto>> GetAllTicketsWithDetailsAsync();
 }
