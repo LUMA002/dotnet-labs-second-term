@@ -14,8 +14,8 @@ string? connectionString = builder.Configuration.GetConnectionString("DefaultCon
 if (string.IsNullOrEmpty(connectionString) || connectionString == "PLACEHOLDER")
     throw new InvalidOperationException("Connection string not found. Configure User Secrets.");
 
-// Add MVC services to the container.
-builder.Services.AddControllersWithViews();
+// Add Razor services to the container.
+builder.Services.AddRazorPages();
 
 // FLUENTVALIDATION
 builder.Services.AddValidatorsFromAssemblyContaining<CreatePassengerDtoValidator>();
@@ -36,22 +36,20 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
 app.UseRouting();
 
 app.UseAuthorization();
 
 app.MapStaticAssets();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+app.MapRazorPages()
+   .WithStaticAssets();
 
 // Apply migrations on startup
 //using (var scope = app.Services.CreateScope())
@@ -60,3 +58,4 @@ app.MapControllerRoute(
 //    await dbContext.Database.MigrateAsync();
 //}
 await app.RunAsync();
+

@@ -1,0 +1,67 @@
+﻿@page "{id:guid}"
+@model Labs.RazorApp.Pages.Passengers.DetailsModel
+@{
+    ViewData["Title"] = "Passenger Details";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h2 class="mb-0">
+                        <i class="bi bi-eye"></i> Passenger Details
+                    </h2>
+                </div>
+                <div class="card-body">
+                    @if (Model.Passenger != null)
+                    {
+                        <dl class="row">
+                            <dt class="col-sm-3">
+                                <i class="bi bi-person"></i> Full Name
+                            </dt>
+                            <dd class="col-sm-9">
+                                <strong>@Model.Passenger.LastName @Model.Passenger.FirstName @Model.Passenger.MiddleName</strong>
+                            </dd>
+
+                            <dt class="col-sm-3">
+                                <i class="bi bi-telephone"></i> Phone Number
+                            </dt>
+                            <dd class="col-sm-9">
+                                @(Model.Passenger.PhoneNumber ?? "N/A")
+                            </dd>
+
+                            <dt class="col-sm-3">
+                                <i class="bi bi-house"></i> Address
+                            </dt>
+                            <dd class="col-sm-9">
+                                @(Model.Passenger.Address ?? "N/A")
+                            </dd>
+
+                            <dt class="col-sm-3">
+                                <i class="bi bi-key"></i> ID
+                            </dt>
+                            <dd class="col-sm-9">
+                                <code>@Model.Passenger.Id</code>
+                            </dd>
+                        </dl>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-page="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to List
+                            </a>
+                            <div>
+                                <a asp-page="Edit" asp-route-id="@Model.Passenger.Id" class="btn btn-warning">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                                <a asp-page="Delete" asp-route-id="@Model.Passenger.Id" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

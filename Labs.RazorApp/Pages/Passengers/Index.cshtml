@@ -1,0 +1,113 @@
+﻿@page
+@model Labs.RazorApp.Pages.Passengers.IndexModel
+@{
+    ViewData["Title"] = "Passengers";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="bi bi-people-fill"></i> Passengers
+        </h1>
+        <a asp-page="Create" class="btn btn-primary">
+            <i class="bi bi-person-plus"></i> Add New Passenger
+        </a>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @Model.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> @Model.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card shadow">
+        <div class="card-body">
+            @if (Model.Passengers.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Address</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var passenger in Model.Passengers)
+                            {
+                                <tr>
+                                    <td>
+                                        <i class="bi bi-person-circle"></i>
+                                        <strong>@passenger.LastName @passenger.FirstName</strong>
+                                        @if (!string.IsNullOrEmpty(passenger.MiddleName))
+                                        {
+                                            <br />
+                                            <small class="text-muted">@passenger.MiddleName</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(passenger.PhoneNumber))
+                                        {
+                                            <i class="bi bi-telephone"></i> 
+                                            @passenger.PhoneNumber
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrEmpty(passenger.Address))
+                                        {
+                                            <i class="bi bi-house"></i> 
+                                            @passenger.Address
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group" role="group">
+                                            <a asp-page="Details" asp-route-id="@passenger.Id"
+                                               class="btn btn-sm btn-info" title="Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a asp-page="Edit" asp-route-id="@passenger.Id"
+                                               class="btn btn-sm btn-warning" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a asp-page="Delete" asp-route-id="@passenger.Id"
+                                               class="btn btn-sm btn-danger" title="Delete">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info mb-0">
+                    <i class="bi bi-info-circle"></i> No passengers found.
+                    <a asp-page="Create" class="alert-link">Add one now</a>.
+                </div>
+            }
+        </div>
+    </div>
+</div>

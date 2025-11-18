@@ -1,0 +1,154 @@
+﻿@page
+@model Labs.RazorApp.Pages.IndexModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container mt-4">
+    <!-- Hero Section -->
+    <div class="jumbotron bg-primary text-white rounded p-5 mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-4">
+                    <i class="bi bi-train-front-fill"></i> Ticket Reservation System
+                </h1>
+                <p class="lead">Welcome to the modern train ticket booking platform</p>
+                <p class="mb-4">Book tickets, manage passengers, and track your journeys with ease.</p>
+                <fieldset class="btn-group" aria-label="Main actions">
+                    <a asp-page="/Passengers/Create" class="btn btn-light btn-lg">
+                        <i class="bi bi-person-plus"></i> New Passenger
+                    </a>
+                    <a asp-page="/Tickets/Index" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-ticket-perforated"></i> View Tickets
+                    </a>
+                </fieldset>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="bi bi-train-front" style="font-size: 120px; opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card text-white bg-info shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2 text-white-50">Total Passengers</h6>
+                            <h2 class="card-title mb-0">@Model.TotalPassengers</h2>
+                        </div>
+                        <div>
+                            <i class="bi bi-people-fill" style="font-size: 48px; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top border-white">
+                    <a asp-page="/Passengers/Index" class="text-white text-decoration-none">
+                        View all <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-white bg-success shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2 text-white-50">Total Tickets</h6>
+                            <h2 class="card-title mb-0">@Model.TotalTickets</h2>
+                        </div>
+                        <div>
+                            <i class="bi bi-ticket-perforated-fill" style="font-size: 48px; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top border-white">
+                    <a asp-page="/Tickets/Index" class="text-white text-decoration-none">
+                        View all <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card text-white bg-warning shadow">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-subtitle mb-2 text-white-50">Total Revenue</h6>
+                            <h2 class="card-title mb-0">@Model.TotalRevenue.ToString("C")</h2>
+                        </div>
+                        <div>
+                            <i class="bi bi-cash-stack" style="font-size: 48px; opacity: 0.5;"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-top border-white">
+                    <span class="text-white">From @Model.TotalTickets bookings</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Tickets -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-clock-history"></i> Recent Bookings
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentTickets.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Passenger</th>
+                                        <th>Train</th>
+                                        <th>Destination</th>
+                                        <th>Departure</th>
+                                        <th class="text-end">Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var ticket in Model.RecentTickets)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <i class="bi bi-person-circle"></i> @ticket.PassengerName
+                                            </td>
+                                            <td>
+                                                <i class="bi bi-train-front"></i> @ticket.TrainNumber (@ticket.TrainType)
+                                            </td>
+                                            <td>
+                                                <i class="bi bi-geo-alt"></i> @ticket.Destination
+                                            </td>
+                                            <td>
+                                                <i class="bi bi-calendar-event"></i> @ticket.DepartureDateTime.ToString("MMM dd, HH:mm")
+                                            </td>
+                                            <td class="text-end">
+                                                <strong class="text-success">@ticket.TotalPrice.ToString("C")</strong>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mb-0">
+                            <i class="bi bi-info-circle"></i> No recent bookings found
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
