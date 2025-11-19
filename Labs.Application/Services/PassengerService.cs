@@ -5,7 +5,7 @@ using Labs.Domain.Entities;
 
 namespace Labs.Application.Services;
 
-public class PassengerService
+public class PassengerService : IPassengerService
 {
     private readonly IRepository<Passenger> _repository;
 
