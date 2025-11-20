@@ -1,6 +1,7 @@
 ﻿@page "/passengers"
+@using Labs.BlazorServerWithSignalR.Models
 @inject IPassengerService PassengerService
-@inject NavigationManager Navigation
+@inject IJSRuntime JS
 @rendermode InteractiveServer
 
 <PageTitle>Passengers</PageTitle>
@@ -13,28 +14,10 @@
         </a>
     </div>
 
-    @if (errorMessage != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show">
-            <i class="bi bi-exclamation-triangle"></i> @errorMessage
-            <button type="button" class="btn-close" @onclick="@(() => errorMessage = null)"></button>
-        </div>
-    }
-
-    @if (successMessage != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show">
-            <i class="bi bi-check-circle"></i> @successMessage
-            <button type="button" class="btn-close" @onclick="@(() => successMessage = null)"></button>
-        </div>
-    }
-
-    @if (passengers == null)
+    @if (passengers is null)
     {
         <div class="text-center p-5">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
+            <div class="spinner-border text-primary"><span class="visually-hidden">Loading...</span></div>
         </div>
     }
     else if (!passengers.Any())
@@ -46,10 +29,10 @@
     else
     {
         <div class="card shadow">
-            <div class="card-body">
+            <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
                             <tr>
                                 <th>Name</th>
                                 <th>Phone</th>
@@ -58,50 +41,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var passenger in passengers)
-                            {
-                                <tr>
-                                    <td>
-                                        <i class="bi bi-person-circle"></i>
-                                        @passenger.LastName @passenger.FirstName @passenger.MiddleName
-                                    </td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(passenger.PhoneNumber))
-                                        {
-                                            <i class="bi bi-telephone"></i>
-                                            @passenger.PhoneNumber
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">N/A</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(passenger.Address))
-                                        {
-                                            <i class="bi bi-geo-alt"></i>
-                                            @passenger.Address
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">N/A</span>
-                                        }
-                                    </td>
-                                    <td class="text-end">
-                                        <div class="btn-group" role="group">
-                                            <a href="/passengers/details/@passenger.Id" class="btn btn-sm btn-info" title="Details">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <a href="/passengers/edit/@passenger.Id" class="btn btn-sm btn-warning" title="Edit">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                            <a href="/passengers/delete/@passenger.Id" class="btn btn-sm btn-danger" title="Delete">
-                                                <i class="bi bi-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
+                        @foreach (var p in passengers)
+                        {
+                            var highlight = newPassengersHighlight.Contains(p.PassengerId) ? "table-success" : "";
+                            <tr class="@highlight" data-id="@p.PassengerId">
+                                <td>
+                                    <i class="bi bi-person-circle"></i>
+                                    @p.LastName @p.FirstName @p.MiddleName
+                                </td>
+                                <td>@(string.IsNullOrEmpty(p.PhoneNumber) ? "N/A" : p.PhoneNumber)</td>
+                                <td>@(string.IsNullOrEmpty(p.Address) ? "N/A" : p.Address)</td>
+                                <td class="text-end">
+                                    <div class="btn-group">
+                                        <a href="/passengers/details/@p.PassengerId" class="btn btn-sm btn-info"><i class="bi bi-eye"></i></a>
+                                        <a href="/passengers/edit/@p.PassengerId" class="btn btn-sm btn-warning"><i class="bi bi-pencil"></i></a>
+                                        <a href="/passengers/delete/@p.PassengerId" class="btn btn-sm btn-danger"><i class="bi bi-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
                         </tbody>
                     </table>
                 </div>
@@ -111,40 +69,101 @@
 </div>
 
 @code {
-    private List<PassengerResponseDto>? passengers;
-    private string? errorMessage;
-    private string? successMessage;
+
+    // work with ViewModel to allow mutable updates
+    private List<UpdatePassengerViewModel>? passengers;
+    private HashSet<Guid> newPassengersHighlight = new();
+    private DotNetObjectReference<Index>? _ref;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadPassengersAsync();
+        await LoadAllAsync();
+    }
 
-        // check for TempData (actually dictionary) messages by parsing query string (smth like /passengers?success={someMsg})
-        var uri = new Uri(Navigation.Uri);
-        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-        
-        if (query["success"] != null)
+    // with that approach MS.SignalR.Client should also work, I guess
+    // so main problem was with not using this method, I guess...
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
         {
-            successMessage = query["success"];
-        }
-        
-        if (query["error"] != null)
-        {
-            errorMessage = query["error"];
+            _ref = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("passengers.register", _ref);
         }
     }
 
-    private async Task LoadPassengersAsync()
+    private async Task LoadAllAsync()
     {
-        try
+        var list = await PassengerService.GetAllPassengersAsync();
+        passengers = list.Select(UpdatePassengerViewModel.FromDto)
+                         .OrderBy(p => p.LastName)
+                         .ThenBy(p => p.FirstName)
+                         .ToList();
+    }
+
+    // JSInvokable methods for incremental updates (receive DTO, map to VM)
+
+    [JSInvokable]
+    public void AddPassenger(PassengerResponseDto dto)
+    {
+        if (passengers is null) return;
+        if (passengers.Any(p => p.PassengerId == dto.Id)) return; // dublicate check
+
+        var vm = UpdatePassengerViewModel.FromDto(dto);
+        passengers.Add(vm);
+        passengers = passengers.OrderBy(p => p.LastName).ThenBy(p => p.FirstName).ToList();
+
+        newPassengersHighlight.Add(vm.PassengerId);
+        StateHasChanged();
+        _ = RemoveHighlightDelayed(vm.PassengerId);
+    }
+
+    [JSInvokable]
+    public void UpdatePassenger(PassengerResponseDto? dto)
+    {
+        if (dto is null || passengers is null) return;
+
+        var vm = passengers.FirstOrDefault(p => p.PassengerId == dto.Id);
+        if (vm is null)
         {
-            var result = await PassengerService.GetAllPassengersAsync();
-            passengers = result.ToList();
+            AddPassenger(dto);
+            return;
         }
-        catch (Exception ex)
+
+        vm.FirstName = dto.FirstName;
+        vm.LastName = dto.LastName;
+        vm.MiddleName = dto.MiddleName;
+        vm.Address = dto.Address;
+        vm.PhoneNumber = dto.PhoneNumber;
+
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void RemovePassenger(Guid id)
+    {
+        if (passengers is null) return;
+        var idx = passengers.FindIndex(p => p.PassengerId == id);
+        if (idx >= 0)
         {
-            errorMessage = "Error loading passengers: " + ex.Message;
-            passengers = new List<PassengerResponseDto>();
+            passengers.RemoveAt(idx);
+            newPassengersHighlight.Remove(id);
+            StateHasChanged();
+        }
+    }
+
+    private async Task RemoveHighlightDelayed(Guid id)
+    {
+        await Task.Delay(4000);
+        if (newPassengersHighlight.Remove(id))
+            StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_ref is not null)
+        {
+            await JS.InvokeVoidAsync("passengers.unregister");
+            _ref.Dispose();
         }
     }
 }
