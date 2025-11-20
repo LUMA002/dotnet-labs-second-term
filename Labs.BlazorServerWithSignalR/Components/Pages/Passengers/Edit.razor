@@ -1,0 +1,231 @@
+﻿@page "/passengers/edit/{id:guid}"
+@using Labs.BlazorServerWithSignalR.Models
+@using Labs.Application.DTOs.Request
+@inject IPassengerService PassengerService
+@inject IValidator<UpdatePassengerRequestDto> Validator
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+
+<PageTitle>Edit Passenger</PageTitle>
+
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="mb-0">
+                        <i class="bi bi-pencil"></i> Edit Passenger
+                    </h3>
+                </div>
+                <div class="card-body">
+                    @if (isLoading)
+                    {
+                        <div class="text-center p-5">
+                            <div class="spinner-border text-warning" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    }
+                    else if (!string.IsNullOrEmpty(loadError))
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <h4 class="alert-heading">
+                                <i class="bi bi-exclamation-triangle"></i> Error
+                            </h4>
+                            <p>@loadError</p>
+                            <a href="/passengers" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    }
+                    else if (viewModel != null)
+                    {
+                        <EditForm Model="@viewModel" OnValidSubmit="HandleSubmit" FormName="EditPassengerForm">
+                            @if (validationErrors.Any())
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <h5 class="alert-heading">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> Validation Errors
+                                    </h5>
+                                    <ul class="mb-0">
+                                        @foreach (var error in validationErrors)
+                                        {
+                                            <li>@error</li>
+                                        }
+                                    </ul>
+                                    <button type="button" class="btn-close" @onclick="@(() => validationErrors.Clear())"></button>
+                                </div>
+                            }
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        First Name <span class="text-danger">*</span>
+                                    </label>
+                                    <InputText @bind-Value="viewModel.FirstName"
+                                               class="form-control"
+                                               placeholder="Enter first name"
+                                               disabled="@isSubmitting" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        Last Name <span class="text-danger">*</span>
+                                    </label>
+                                    <InputText @bind-Value="viewModel.LastName"
+                                               class="form-control"
+                                               placeholder="Enter last name"
+                                               disabled="@isSubmitting" />
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Middle Name</label>
+                                <InputText @bind-Value="viewModel.MiddleName"
+                                           class="form-control"
+                                           placeholder="Enter middle name (optional)"
+                                           disabled="@isSubmitting" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Phone Number</label>
+                                <InputText @bind-Value="viewModel.PhoneNumber"
+                                           class="form-control"
+                                           type="tel"
+                                           placeholder="+380XXXXXXXXX"
+                                           disabled="@isSubmitting" />
+                                <small class="form-text text-muted">
+                                    Format: +380XXXXXXXXX or 10-17 digits
+                                </small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Address</label>
+                                <InputTextArea @bind-Value="viewModel.Address"
+                                               class="form-control"
+                                               rows="3"
+                                               placeholder="Enter address (optional)"
+                                               disabled="@isSubmitting" />
+                            </div>
+
+                            <hr />
+
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <a href="/passengers" class="btn btn-secondary" disabled="@isSubmitting">
+                                    <i class="bi bi-arrow-left"></i> Back to List
+                                </a>
+                                <button type="submit" class="btn btn-warning" disabled="@isSubmitting">
+                                    @if (isSubmitting)
+                                    {
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        <span>Updating...</span>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-save"></i>
+                                        <span> Update Passenger</span>
+                                    }
+                                </button>
+                            </div>
+                        </EditForm>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    [SupplyParameterFromForm]
+    private UpdatePassengerViewModel? viewModel { get; set; }
+
+    private List<string> validationErrors = new();
+    private bool isSubmitting = false;
+    private bool isLoading = true;
+    private string? loadError = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // if form is already filled (after POST), do not reload
+        if (viewModel != null)
+        {
+            viewModel.PassengerId = Id;
+            isLoading = false;
+            return;
+        }
+
+        try
+        {
+            var passenger = await PassengerService.GetPassengerByIdAsync(Id);
+            
+            if (passenger == null)
+            {
+                loadError = "Passenger not found.";
+                return;
+            }
+
+            viewModel = UpdatePassengerViewModel.FromDto(passenger);
+        }
+        catch (Exception ex)
+        {
+            loadError = $"Error loading passenger: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (viewModel == null || isSubmitting)
+        {
+            return;
+        }
+
+        validationErrors.Clear();
+        isSubmitting = true;
+        bool success = false; 
+
+        try
+        {
+            viewModel.PassengerId = Id;
+            var dto = viewModel.ToDto();
+
+            // FluentValidation
+            var validationResult = await Validator.ValidateAsync(dto);
+
+            if (!validationResult.IsValid)
+            {
+                validationErrors = validationResult.Errors
+                    .Select(e => $"{e.PropertyName}: {e.ErrorMessage}")
+                    .ToList();
+                return; 
+            }
+
+            success = await PassengerService.UpdatePassengerAsync(dto);
+
+            if (!success)
+            {
+                validationErrors.Add("Failed to update passenger. Passenger may not exist.");
+            }
+        }
+        catch (Exception ex)
+        {
+            validationErrors.Add($"Error updating passenger: {ex.Message}");
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+
+        // IMPORTANT: navigation outside of try-catch-finally to avoid issues with specific work of Navigation
+        // NavigationException will not be catched
+        if (success)
+        {
+            Navigation.NavigateTo("/passengers?success=Passenger updated successfully");
+        }
+    }
+}

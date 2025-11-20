@@ -1,0 +1,107 @@
+﻿@page "/tickets"
+@inject TicketService TicketService
+
+<PageTitle>Tickets</PageTitle>
+
+<div class="container-fluid mt-4">
+    <h1><i class="bi bi-ticket-perforated"></i> All Tickets</h1>
+
+    @if (errorMessage != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            <i class="bi bi-exclamation-triangle"></i> @errorMessage
+            <button type="button" class="btn-close" @onclick="@(() => errorMessage = null)"></button>
+        </div>
+    }
+
+    @if (tickets == null)
+    {
+        <div class="text-center p-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    }
+    else if (!tickets.Any())
+    {
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No tickets found.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var ticket in tickets)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-train-front"></i> Train @ticket.TrainNumber
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2">
+                                <strong><i class="bi bi-person"></i> Passenger:</strong><br />
+                                @ticket.PassengerName
+                            </p>
+                            <p class="mb-2">
+                                <strong><i class="bi bi-telephone"></i> Phone:</strong><br />
+                                @ticket.PassengerPhone
+                            </p>
+                            <p class="mb-2">
+                                <strong><i class="bi bi-geo-alt"></i> Destination:</strong><br />
+                                @ticket.Destination (@ticket.Distance km)
+                            </p>
+                            <p class="mb-2">
+                                <strong><i class="bi bi-calendar-event"></i> Departure:</strong><br />
+                                @ticket.DepartureDateTime.ToString("yyyy-MM-dd HH:mm")
+                            </p>
+                            <p class="mb-2">
+                                <strong><i class="bi bi-calendar-check"></i> Arrival:</strong><br />
+                                @ticket.ArrivalDateTime.ToString("yyyy-MM-dd HH:mm")
+                            </p>
+                            <hr />
+                            <p class="mb-1">
+                                <small class="text-muted">Base Price: @ticket.BasePrice.ToString("C")</small>
+                            </p>
+                            <p class="mb-1">
+                                <small class="text-muted">Wagon Surcharge: @ticket.WagonSurcharge.ToString("C")</small>
+                            </p>
+                            <p class="mb-1">
+                                <small class="text-muted">Urgency Surcharge: @ticket.UrgencySurcharge.ToString("C")</small>
+                            </p>
+                            <h5 class="text-primary mt-2">
+                                <strong>Total: @ticket.TotalPrice.ToString("C")</strong>
+                            </h5>
+                        </div>
+                        <div class="card-footer text-muted">
+                            <small>
+                                @ticket.TrainType | Wagon @ticket.WagonNumber (@ticket.WagonType)
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<TicketInfoResponseDto>? tickets;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await TicketService.GetAllTicketsWithDetailsAsync();
+            tickets = result.ToList();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "Error loading tickets: " + ex.Message;
+            tickets = new List<TicketInfoResponseDto>();
+        }
+    }
+}

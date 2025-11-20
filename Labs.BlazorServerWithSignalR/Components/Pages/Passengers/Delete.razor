@@ -1,0 +1,222 @@
+﻿@page "/passengers/delete/{id:guid}"
+@inject IPassengerService PassengerService
+@inject NavigationManager Navigation
+
+<PageTitle>Delete Passenger</PageTitle>
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Delete Passenger
+                    </h2>
+                </div>
+                <div class="card-body">
+                    @if (isLoading)
+                    {
+                        <div class="text-center p-5">
+                            <div class="spinner-border text-danger" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3 text-muted">Loading passenger information...</p>
+                        </div>
+                    }
+                    else if (loadError != null)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <h4 class="alert-heading">
+                                <i class="bi bi-exclamation-circle-fill"></i> Error
+                            </h4>
+                            <p>@loadError</p>
+                            <hr>
+                            <a href="/passengers" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    }
+                    else if (passenger != null)
+                    {
+                        <div class="alert alert-warning border-warning" role="alert">
+                            <h5 class="alert-heading">
+                                <i class="bi bi-exclamation-triangle"></i> Warning
+                            </h5>
+                            <p class="mb-0">
+                                Are you sure you want to <strong>permanently delete</strong> this passenger?
+                                This action cannot be undone.
+                            </p>
+                        </div>
+
+                        <div class="card mt-3">
+                            <div class="card-body">
+                                <h5 class="card-title text-danger">
+                                    <i class="bi bi-person-x"></i> Passenger Information
+                                </h5>
+                                <dl class="row mb-0">
+                                    <dt class="col-sm-4">Full Name:</dt>
+                                    <dd class="col-sm-8">
+                                        <strong>@passenger.LastName @passenger.FirstName @passenger.MiddleName</strong>
+                                    </dd>
+
+                                    <dt class="col-sm-4">Phone Number:</dt>
+                                    <dd class="col-sm-8">
+                                        @if (!string.IsNullOrEmpty(passenger.PhoneNumber))
+                                        {
+                                            <i class="bi bi-telephone"></i>
+                                            <span>@passenger.PhoneNumber</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </dd>
+
+                                    <dt class="col-sm-4">Address:</dt>
+                                    <dd class="col-sm-8">
+                                        @if (!string.IsNullOrEmpty(passenger.Address))
+                                        {
+                                            <i class="bi bi-house"></i>
+                                            <span>@passenger.Address</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">N/A</span>
+                                        }
+                                    </dd>
+
+                                    <dt class="col-sm-4">ID:</dt>
+                                    <dd class="col-sm-8">
+                                        <code>@passenger.Id</code>
+                                    </dd>
+                                </dl>
+                            </div>
+                        </div>
+
+                        @if (deleteError != null)
+                        {
+                            <div class="alert alert-danger mt-3" role="alert">
+                                <i class="bi bi-exclamation-circle-fill"></i>
+                                <strong>Error:</strong> @deleteError
+                            </div>
+                        }
+
+                        <hr class="my-4" />
+
+                        <form method="post" @onsubmit="HandleDelete" @formname="DeletePassengerForm">
+                            <AntiforgeryToken />
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="/passengers" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Cancel
+                                </a>
+                                <button type="submit" class="btn btn-danger" disabled="@isDeleting">
+                                    @if (isDeleting)
+                                    {
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        <span>Deleting...</span>
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-trash-fill"></i>
+                                        <span> Confirm Delete</span>
+                                    }
+                                </button>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] 
+    public Guid Id { get; set; }
+
+    private PassengerResponseDto? passenger;
+    private string? loadError;
+    private string? deleteError;
+    private bool isLoading = true;
+    private bool isDeleting = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPassengerAsync();
+    }
+
+    private async Task LoadPassengerAsync()
+    {
+        try
+        {
+            if (Id == Guid.Empty)
+            {
+                loadError = "Invalid passenger ID provided.";
+                isLoading = false;
+                return;
+            }
+
+            passenger = await PassengerService.GetPassengerByIdAsync(Id);
+
+            if (passenger == null)
+            {
+                loadError = "Passenger not found. The passenger may have been already deleted.";
+            }
+        }
+        catch (Exception ex)
+        {
+            loadError = $"Error loading passenger: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleDelete()
+    {
+        if (isDeleting || passenger == null)
+        {
+            return;
+        }
+
+        isDeleting = true;
+        deleteError = null;
+
+        bool deleteSuccessful = false;
+        string? successMessage = null;
+
+        try
+        {
+            var success = await PassengerService.DeletePassengerAsync(Id);
+
+            if (success)
+            {
+                deleteSuccessful = true;
+                successMessage = $"Passenger '{passenger.FirstName} {passenger.LastName}' deleted successfully!";
+            }
+            else
+            {
+                deleteError = "Passenger not found or could not be deleted. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            deleteError = $"Error deleting passenger: {ex.Message}";
+        }
+        finally
+        {
+            isDeleting = false;
+        }
+
+        // IMPORTANT: navigation outside of try-catch-finally to avoid issues with specific work of Navigation
+        // NavigationException will not be catched
+        if (deleteSuccessful)
+        {
+            Navigation.NavigateTo(
+                $"/passengers?success={successMessage}"
+            );
+        }
+    }
+}
