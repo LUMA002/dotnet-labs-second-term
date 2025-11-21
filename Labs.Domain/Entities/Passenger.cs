@@ -9,7 +9,7 @@ namespace Labs.Domain.Entities
         public string? MiddleName { get; set; }
         public string? Address { get; set; }
         public string? PhoneNumber { get; set; }
-        public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+        public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>(); // check the case with using immutable collections [array] instead of List
 
     }
 }

@@ -40,7 +40,7 @@ public class PassengersController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving passengers");
-            TempData["Error"] = "Error loading passengers";
+            TempData["Error"] = "Error loading passengers"; // bad practice to use TempData
             return View(Enumerable.Empty<PassengerResponseDto>());
         }
     }
@@ -99,7 +99,7 @@ public class PassengersController : Controller
             TempData["Success"] = "Passenger created successfully";
             return RedirectToAction(nameof(Index));
         }
-        catch (CustomValidationException ex)
+        catch (CustomValidationException ex) // redundant
         {
             ModelState.AddModelError(string.Empty, ex.Message);
             return View(dto);

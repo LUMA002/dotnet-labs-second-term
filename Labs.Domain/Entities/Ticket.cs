@@ -3,7 +3,6 @@
 public sealed class Ticket
 {
     public Guid TicketId { get; init; } // change to Id
-
     public Guid PassengerId { get; set; }
     public Passenger Passenger { get; set; } = null!;
     public Guid TrainId { get; set; }

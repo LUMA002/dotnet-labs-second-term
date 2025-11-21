@@ -29,7 +29,7 @@ public class TicketsController : Controller
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving tickets");
-            TempData["Error"] = "Error loading tickets";
+            TempData["Error"] = "Error loading tickets"; // bad practice to use TempData
             return View(new List<Labs.Application.DTOs.Response.TicketInfoResponseDto>());
         }
     }

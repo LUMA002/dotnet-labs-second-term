@@ -23,7 +23,7 @@ public class EditModel : PageModel
     }
 
     [BindProperty]
-    public Guid PassengerId { get; set; }
+    public Guid PassengerId { get; set; } // better to do it private
 
     [BindProperty]
     public string? FirstName { get; set; }
@@ -44,7 +44,7 @@ public class EditModel : PageModel
     {
         if (id == Guid.Empty)
         {
-            TempData["ErrorMessage"] = "Invalid passenger ID";
+            TempData["ErrorMessage"] = "Invalid passenger ID"; // bad practice to use TempData
             return RedirectToPage("./Index");
         }
 

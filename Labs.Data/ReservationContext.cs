@@ -9,6 +9,7 @@ public class ReservationContext : DbContext
     public ReservationContext(DbContextOptions<ReservationContext> options) : base(options) { }
 
     public DbSet<Passenger> Passengers => Set<Passenger>();
+    // public DbSet<Train> Trains { get; init; } // better to do like that
     public DbSet<Train> Trains => Set<Train>();
     public DbSet<TrainType> TrainTypes => Set<TrainType>();
     public DbSet<Wagon> Wagons => Set<Wagon>();
