@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Labs.Blazor", "Labs.Blazor\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Labs.BlazorServerWithSignalR", "Labs.BlazorServerWithSignalR\Labs.BlazorServerWithSignalR.csproj", "{E9CFDD6A-BE2F-0669-F334-86F41BFD7B50}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Labs.WebAPI", "Labs.WebAPI\Labs.WebAPI.csproj", "{28D03E91-FC2B-4FA9-986E-A476ED3CFDAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{E9CFDD6A-BE2F-0669-F334-86F41BFD7B50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9CFDD6A-BE2F-0669-F334-86F41BFD7B50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9CFDD6A-BE2F-0669-F334-86F41BFD7B50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28D03E91-FC2B-4FA9-986E-A476ED3CFDAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28D03E91-FC2B-4FA9-986E-A476ED3CFDAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28D03E91-FC2B-4FA9-986E-A476ED3CFDAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28D03E91-FC2B-4FA9-986E-A476ED3CFDAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
