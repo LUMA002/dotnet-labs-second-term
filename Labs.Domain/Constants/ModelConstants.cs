@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Labs.Domain.Constants
 {
-    public static class ModelConstants {
+    public static class ModelConstants
+    {
         // Passenger
         public const int PassengerNameMaxLength = 100;
         public const int PassengerAddressMaxLength = 255;

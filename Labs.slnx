@@ -1,0 +1,16 @@
+<Solution>
+  <Project Path="Labs.AdoApp/Labs.AdoApp.csproj" />
+  <Project Path="Labs.Application/Labs.Application.csproj" />
+  <Project Path="Labs.Blazor/Labs.Blazor.csproj" />
+  <Project Path="Labs.BlazorServerWithSignalR/Labs.BlazorServerWithSignalR.csproj" />
+  <Project Path="Labs.Data/Labs.Data.csproj" />
+  <Project Path="Labs.Domain/Labs.Domain.csproj" />
+  <Project Path="Labs.EfApp/Labs.EfApp.csproj" />
+  <Project Path="Labs.MVCApp/Labs.MVCApp.csproj" />
+  <Project Path="Labs.RazorApp/Labs.RazorApp.csproj" />
+  <Project Path="Labs.ReactApp/labs.reactapp.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="Labs.WebAPI/Labs.WebAPI.csproj" />
+</Solution>
