@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Labs.MyMauiApp.ViewModels"
+             xmlns:dto="clr-namespace:Labs.Application.DTOs.Response;assembly=Labs.Application"
+             x:Class="Labs.MyMauiApp.Pages.Passengers.PassengersPage"
+             x:DataType="vm:PassengersViewModel"
+             Title="Passengers">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="0">
+
+        <RefreshView Grid.Row="1"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshCommand}">
+
+            <CollectionView ItemsSource="{Binding Passengers}"
+                            SelectionMode="None">
+
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center" 
+                                         VerticalOptions="Center"
+                                         Spacing="15">
+                        <Label Text="No passengers found" FontSize="18" />
+                        <Button Text="Load Passengers" 
+                                Command="{Binding LoadPassengersCommand}" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="dto:PassengerResponseDto">
+                        <Border Stroke="#dee2e6"
+                                StrokeThickness="1"
+                                Padding="15"
+                                Margin="10,5"
+                                BackgroundColor="White">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+                            <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+
+                                <Label Grid.Row="0" Grid.Column="0"
+                                       FontSize="18"
+                                       FontAttributes="Bold">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding LastName}" />
+                                            <Span Text=" " />
+                                            <Span Text="{Binding FirstName}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+
+                                <Label Grid.Row="1" Grid.Column="0"
+                                       Text="{Binding PhoneNumber}"
+                                       FontSize="14"
+                                       TextColor="#6c757d" />
+
+                                <Label Grid.Row="2" Grid.Column="0"
+                                       Text="{Binding Address}"
+                                       FontSize="12"
+                                       TextColor="#6c757d" />
+
+                                <HorizontalStackLayout Grid.Row="0" Grid.RowSpan="3" Grid.Column="1"
+                                                       VerticalOptions="Center"
+                                                       Spacing="5">
+                                    <Button Text="Edit"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PassengersViewModel}}, Path=EditPassengerCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#ffc107"
+                                            TextColor="White"
+                                            WidthRequest="60" />
+                                    <Button Text="Delete"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PassengersViewModel}}, Path=DeletePassengerCommand}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#dc3545"
+                                            TextColor="White"
+                                            WidthRequest="70" />
+                                </HorizontalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <Button Grid.Row="2"
+                Text="Add Passenger"
+                Command="{Binding AddPassengerCommand}"
+                BackgroundColor="#007bff"
+                TextColor="White"
+                Margin="10"
+                Padding="15" />
+
+        <Grid Grid.Row="1"
+              IsVisible="{Binding IsLoading}"
+              BackgroundColor="#80000000">
+            <ActivityIndicator IsRunning="True"
+                               Color="White"
+                               VerticalOptions="Center" />
+        </Grid>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Labs.MyMauiApp.ViewModels"
+             x:Class="Labs.MyMauiApp.Pages.Passengers.CreatePassengerPage"
+             x:DataType="vm:CreatePassengerViewModel"
+             Title="Add Passenger">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            
+            <Label Text="Add New Passenger" FontSize="24" FontAttributes="Bold" />
+
+            <Border Stroke="#dee2e6" Padding="15" StrokeThickness="1">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+                    
+                    <VerticalStackLayout>
+                        <Label>
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="First Name " />
+                                    <Span Text="*" TextColor="Red" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Entry Text="{Binding FirstName}" Placeholder="Enter first name" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout>
+                        <Label>
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Last Name " />
+                                    <Span Text="*" TextColor="Red" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Entry Text="{Binding LastName}" Placeholder="Enter last name" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout>
+                        <Label Text="Middle Name (Optional)" />
+                        <Entry Text="{Binding MiddleName}" Placeholder="Enter middle name" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout>
+                        <Label>
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Phone Number " />
+                                    <Span Text="*" TextColor="Red" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Entry Text="{Binding PhoneNumber}" 
+                               Placeholder="+380XXXXXXXXX" 
+                               Keyboard="Telephone" />
+                        <Label Text="Format: +380XXXXXXXXX" 
+                               FontSize="12" 
+                               TextColor="Gray" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout>
+                        <Label Text="Address (Optional)" />
+                        <Editor Text="{Binding Address}" 
+                                Placeholder="Enter address" 
+                                HeightRequest="100" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Save"
+                    Command="{Binding SaveCommand}"
+                    BackgroundColor="#28a745"
+                    TextColor="White"
+                    IsEnabled="{Binding IsSaving, Converter={StaticResource InvertedBoolConverter}}" />
+
+            <Button Text="Cancel"
+                    Command="{Binding CancelCommand}"
+                    BackgroundColor="#6c757d"
+                    TextColor="White" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Labs.MyMauiApp.ViewModels"
+             x:Class="Labs.MyMauiApp.Pages.Passengers.EditPassengerPage"
+             x:DataType="vm:EditPassengerViewModel"
+             Title="Edit Passenger">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label Text="Edit Passenger" FontSize="24" FontAttributes="Bold" />
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                               IsVisible="{Binding IsLoading}" />
+
+            <Border Stroke="#dee2e6" Padding="15" StrokeThickness="1" IsVisible="{Binding IsLoading, Converter={StaticResource InvertedBoolConverter}}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="8" />
+                </Border.StrokeShape>
+                <VerticalStackLayout Spacing="15">
+
+                    <VerticalStackLayout>
+                        <Label Text="First Name" />
+                        <Entry Text="{Binding FirstName}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout>
+                        <Label Text="Last Name" />
+                        <Entry Text="{Binding LastName}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout>
+                        <Label Text="Middle Name" />
+                        <Entry Text="{Binding MiddleName}" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout>
+                        <Label Text="Phone Number" />
+                        <Entry Text="{Binding PhoneNumber}" Keyboard="Telephone" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout>
+                        <Label Text="Address" />
+                        <Editor Text="{Binding Address}" HeightRequest="100" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="Save"
+                    Command="{Binding SaveCommand}"
+                    BackgroundColor="#28a745"
+                    TextColor="White" />
+
+            <Button Text="Cancel"
+                    Command="{Binding CancelCommand}"
+                    BackgroundColor="#6c757d"
+                    TextColor="White" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

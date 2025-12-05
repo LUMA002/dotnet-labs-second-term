@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Labs.MyMauiApp.ViewModels"
+             xmlns:dto="clr-namespace:Labs.Application.DTOs.Response;assembly=Labs.Application"
+             x:Class="Labs.MyMauiApp.Pages.Tickets.TicketsPage"
+             x:DataType="vm:TicketsViewModel"
+             Title="Tickets"
+             Shell.BackgroundColor="White">
+
+    <Grid RowDefinitions="Auto,*" Padding="0">
+
+        <Border Grid.Row="0" 
+               BackgroundColor="#dc3545" 
+               StrokeThickness="1"
+               Padding="15" 
+               Margin="10,10,10,0"
+               IsVisible="{Binding HasError}">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="8" />
+            </Border.StrokeShape>
+            <Label Text="{Binding ErrorMessage}" 
+                   TextColor="White" 
+                   FontSize="14" />
+        </Border>
+
+        <RefreshView Grid.Row="1"
+                     IsRefreshing="{Binding IsRefreshing}"
+                     Command="{Binding RefreshCommand}"
+                     RefreshColor="#007bff">
+
+            <CollectionView ItemsSource="{Binding Tickets}">
+
+                <!-- Empty View (like @if (!Model.Tickets.Any()) in Razor) -->
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center" 
+                                         VerticalOptions="Center"
+                                         Padding="20"
+                                         Spacing="15">
+                        <Label Text="📋" 
+                               FontSize="64" 
+                               HorizontalOptions="Center" />
+                        <Label Text="No tickets found" 
+                               FontSize="18" 
+                               HorizontalOptions="Center"
+                               TextColor="#6c757d" />
+                        <Button Text="Load Tickets" 
+                                Command="{Binding LoadTicketsCommand}"
+                                BackgroundColor="#007bff"
+                                TextColor="White"
+                                CornerRadius="8"
+                                Padding="15,10" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+
+                <!-- Item Template (like foreach) -->
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="dto:TicketInfoResponseDto">
+                        <Border Margin="10,5" 
+                               Padding="0" 
+                               Stroke="#dee2e6">
+
+                            <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8" />
+                            </Border.StrokeShape>
+
+                            <Grid RowDefinitions="Auto,Auto,Auto" 
+                                  RowSpacing="0">
+
+                                <!-- Header (Train Number) -->
+                                <Grid Grid.Row="0" 
+                                      BackgroundColor="#007bff" 
+                                      Padding="15">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Grid.Column="0"
+                                               Text="{Binding TrainNumber, StringFormat='🚆 Train {0}'}"
+                                               FontSize="18"
+                                               FontAttributes="Bold"
+                                               TextColor="White" />
+                                        <Label Grid.Column="1"
+                                               Text="{Binding TrainType}"
+                                               FontSize="14"
+                                               TextColor="White"
+                                               Opacity="0.9" />
+                                    </Grid>
+                                </Grid>
+
+                                <!-- Body (Details) -->
+                                <VerticalStackLayout Grid.Row="1" 
+                                                     Padding="15"
+                                                     Spacing="8">
+
+                                    <!-- Passenger -->
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <Label Grid.Column="0" 
+                                               Text="👤 " 
+                                               FontSize="16" />
+                                        <Label Grid.Column="1"
+                                               Text="{Binding PassengerName}"
+                                               FontSize="16" />
+                                    </Grid>
+
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <Label Grid.Column="0" 
+                                               Text="📞 " 
+                                               FontSize="16" />
+                                        <Label Grid.Column="1"
+                                               Text="{Binding PassengerPhone}"
+                                               FontSize="14"
+                                               TextColor="#6c757d" />
+                                    </Grid>
+
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <Label Grid.Column="0" 
+                                               Text="📍 " 
+                                               FontSize="16" />
+                                        <Label Grid.Column="1"
+                                               FontSize="14"
+                                               TextColor="#6c757d">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Destination}" />
+                                                    <Span Text=" (" />
+                                                    <Span Text="{Binding Distance}" />
+                                                    <Span Text=" km)" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    </Grid>
+                                    
+                                    <Grid ColumnDefinitions="Auto,*">
+                                        <Label Grid.Column="0" 
+                                               Text="🕒 " 
+                                               FontSize="16" />
+                                        <Label Grid.Column="1"
+                                               Text="{Binding DepartureDateTime, StringFormat='{0:MMM dd, HH:mm}'}"
+                                               FontSize="14"
+                                               TextColor="#6c757d" />
+                                    </Grid>
+
+                                    <BoxView HeightRequest="1" 
+                                             Color="#dee2e6" 
+                                             Margin="0,5" />
+
+                                    <Grid ColumnDefinitions="*,Auto" 
+                                          RowDefinitions="Auto,Auto,Auto">
+                                        <Label Grid.Row="0" Grid.Column="0"
+                                               Text="Base Price:"
+                                               FontSize="12"
+                                               TextColor="#6c757d" />
+                                        <Label Grid.Row="0" Grid.Column="1"
+                                               Text="{Binding BasePrice, StringFormat='${0:F2}'}"
+                                               FontSize="12"
+                                               TextColor="#6c757d" />
+
+                                        <Label Grid.Row="1" Grid.Column="0"
+                                               Text="Wagon Surcharge:"
+                                               FontSize="12"
+                                               TextColor="#6c757d" />
+                                        <Label Grid.Row="1" Grid.Column="1"
+                                               Text="{Binding WagonSurcharge, StringFormat='${0:F2}'}"
+                                               FontSize="12"
+                                               TextColor="#6c757d" />
+
+                                        <Label Grid.Row="2" Grid.Column="0"
+                                               Text="Urgency Surcharge:"
+                                               FontSize="12"
+                                               TextColor="#6c757d" />
+                                        <Label Grid.Row="2" Grid.Column="1"
+                                               Text="{Binding UrgencySurcharge, StringFormat='${0:F2}'}"
+                                               FontSize="12"
+                                               TextColor="#6c757d" />
+                                    </Grid>
+                                    
+                                    <Grid ColumnDefinitions="*,Auto" 
+                                          Margin="0,5,0,0">
+                                        <Label Grid.Column="0"
+                                               Text="Total:"
+                                               FontSize="18"
+                                               FontAttributes="Bold" />
+                                        <Label Grid.Column="1"
+                                               Text="{Binding TotalPrice, StringFormat='${0:F2}'}"
+                                               FontSize="20"
+                                               FontAttributes="Bold"
+                                               TextColor="#28a745" />
+                                    </Grid>
+                                </VerticalStackLayout>
+
+                                <!-- Footer (Wagon Info) -->
+                                <Grid Grid.Row="2" 
+                                      BackgroundColor="#f8f9fa" 
+                                      Padding="15">
+                                    <Label FontSize="12"
+                                           TextColor="#6c757d"
+                                           HorizontalOptions="Center">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding WagonType}" />
+                                                <Span Text=" | Wagon " />
+                                                <Span Text="{Binding WagonNumber}" />
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <Grid Grid.Row="1"
+              IsVisible="{Binding IsLoading}"
+              BackgroundColor="#80000000">
+            <VerticalStackLayout HorizontalOptions="Center" 
+                                 VerticalOptions="Center">
+                <ActivityIndicator IsRunning="True"
+                                   Color="White"
+                                   WidthRequest="50"
+                                   HeightRequest="50" />
+                <Label Text="Loading tickets..."
+                       TextColor="White"
+                       FontSize="16"
+                       Margin="0,10,0,0" />
+            </VerticalStackLayout>
+        </Grid>
+    </Grid>
+</ContentPage>

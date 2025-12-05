@@ -1,10 +1,14 @@
-﻿namespace Labs.MyMauiApp
+﻿using Labs.MyMauiApp.Pages.Passengers;
+
+namespace Labs.MyMauiApp;
+
+public partial class AppShell : Shell
 {
-    public partial class AppShell : Shell
+    public AppShell()
     {
-        public AppShell()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+
+        Routing.RegisterRoute("passengers/create", typeof(CreatePassengerPage));
+        Routing.RegisterRoute("passengers/edit", typeof(EditPassengerPage));
     }
 }
